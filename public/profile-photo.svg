@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="1120" viewBox="0 0 920 1120" role="img" aria-label="Profile portrait placeholder">
+  <defs>
+    <linearGradient id="bg" x1="160" x2="760" y1="80" y2="1040" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff6eb"/>
+      <stop offset="1" stop-color="#ffd8b8"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="230" x2="760" y1="660" y2="1100" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#181818"/>
+      <stop offset="1" stop-color="#3a2518"/>
+    </linearGradient>
+  </defs>
+  <rect width="920" height="1120" rx="72" fill="url(#bg)"/>
+  <circle cx="690" cy="172" r="96" fill="#ff6b16" opacity=".18"/>
+  <circle cx="178" cy="896" r="130" fill="#ff6b16" opacity=".12"/>
+  <path fill="url(#shirt)" d="M172 1120c22-250 139-397 291-397s269 147 291 397H172Z"/>
+  <circle cx="460" cy="438" r="196" fill="#6f432a"/>
+  <path fill="#161616" d="M260 404c13-149 94-238 217-238 119 0 194 74 209 200-55-40-110-59-164-56-70 5-145 38-262 94Z"/>
+  <path fill="#8c5838" d="M284 461c26-25 51-36 76-31 28 5 51 24 69 57 10 19 23 29 39 29s29-10 39-29c18-33 41-52 69-57 25-5 50 6 76 31-20 112-95 190-184 190s-164-78-184-190Z"/>
+  <path fill="#3a2518" d="M340 694c37 46 78 69 123 69 48 0 90-24 126-73 14 5 31 13 51 24-40 76-100 114-180 114-78 0-137-38-177-113 18-9 37-16 57-21Z"/>
+  <text x="460" y="1030" text-anchor="middle" fill="#fffdf8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="72" font-weight="800">AK</text>
+</svg>

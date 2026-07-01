@@ -1,0 +1,60 @@
+---
+title: "Recovering a Stuck Salesforce DevOps Center Pipeline"
+summary: "Diagnosing a 'Pipeline Stage Out of Sync' failure that blocked promotions across a four-stage Salesforce pipeline, using SOQL against the DOCE object model."
+role: "Salesforce DevOps Engineer"
+date: "2026-03-01"
+stack: ["DevOps Center", "SOQL", "GitHub Actions", "Git", "Heroku"]
+---
+
+{/* This is a template. Replace the narrative and numbers with your real
+    incident details before publishing. Structure intentionally mirrors how
+    you'd brief a stakeholder: context → problem → diagnosis → fix → outcome. */}
+
+## Context
+
+A four-stage Salesforce pipeline — INT → QA → UAT → Production — ran through
+DevOps Center for core metadata, with a parallel Vlocity Build Tool track on
+GitHub Actions for OmniStudio DataPacks. Work items promoted cleanly for
+months until promotions to QA began failing with a **Pipeline Stage Out of
+Sync** error, blocking every team behind the stage.
+
+## The problem
+
+The DevOps Center UI reported the stage as out of sync but gave no actionable
+detail. Promotions queued and failed silently. With multiple squads depending
+on the same stage, the blockage compounded quickly.
+
+## Diagnosis
+
+DevOps Center stores its state in a set of `sf_devops__` objects, so the
+fastest path to ground truth was querying them directly rather than trusting
+the UI. The key objects:
+
+- `sf_devops__Async_Operation_Result__c` — surfaces the underlying error from
+  the Heroku-side worker that the UI swallows.
+- `sf_devops__Branch__c` — the branch state DevOps Center believes exists.
+- `sf_devops__Work_Item_Promote__c` — the promotion records and their status.
+
+Querying the async operation results revealed the real cause: a SHA mismatch
+between the branch state DevOps Center tracked and what actually existed in
+source control after an out-of-band Git operation. The handshake between the
+Salesforce org and the Heroku backend had gone stale.
+
+## The fix
+
+The recovery had three parts:
+
+1. Reconcile the tracked branch SHA in `sf_devops__Branch__c` with the actual
+   tip of the source-control branch.
+2. Clear the failed promotion records so DevOps Center would re-evaluate the
+   stage from a clean state.
+3. Re-trigger promotion, which re-established the org ↔ Heroku handshake.
+
+To stop it recurring, I added a guardrail: promotions now run through a
+controlled path so out-of-band rebases can't desync the tracked SHA.
+
+## Outcome
+
+The stage cleared and queued promotions drained. The diagnostic SOQL set
+became a runbook the team now reaches for first whenever DevOps Center reports
+a sync error — turning a multi-hour blockage into a few-minute check.

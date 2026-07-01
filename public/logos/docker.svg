@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 54" role="img" aria-label="Docker">
+  <g fill="#2496ED">
+    <rect x="17" y="20" width="8" height="7" rx="1"/><rect x="27" y="20" width="8" height="7" rx="1"/><rect x="37" y="20" width="8" height="7" rx="1"/>
+    <rect x="27" y="11" width="8" height="7" rx="1"/><rect x="37" y="11" width="8" height="7" rx="1"/><rect x="47" y="20" width="8" height="7" rx="1"/>
+    <path d="M8 29h54c-2 11-11 18-25 18H24C15 47 9 40 8 29z"/>
+  </g>
+</svg>
