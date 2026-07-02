@@ -16,7 +16,6 @@ export const profile = {
   initials: "AK",
   headline: "Arun Kumar Bathini",
   role: "Cloud DevOps Engineer",
-  photoHref: "/my-image.png",
   timezone: "CST",
   responseTime: "<24h",
   intro:
@@ -30,11 +29,10 @@ export const profile = {
 };
 
 export const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/experience", label: "Experience" },
-  { href: "/certifications", label: "Certifications" },
-  { href: "/contact", label: "Contact" },
+  { href: "#experience", label: "Work" },
+  { href: "#skills", label: "Skills" },
+  { href: "#about", label: "About" },
+  { href: "#contact", label: "Contact" },
 ];
 
 export const stats = [
