@@ -15,18 +15,34 @@ export const profile = {
   name: "Arun Kumar Bathini",
   initials: "AK",
   headline: "Arun Kumar Bathini",
-  role: "Cloud DevOps Engineer",
+  role: "Salesforce DevOps Engineer",
   timezone: "CST",
   responseTime: "<24h",
+  hiringMessage:
+    "Requirement match: Salesforce DevOps, CI/CD automation, AWS/Azure, Kubernetes, Terraform, and production support.",
   intro:
-    "I design and run Salesforce CI/CD pipelines — DevOps Center, Vlocity/OmniStudio DataPacks, and GitHub Actions release automation — backed by deep AWS, Azure, and Kubernetes platform experience. Secure, observable, and built to scale.",
+    "Salesforce DevOps and Cloud DevOps Engineer with 10+ years in IT and 6+ years across CI/CD, release automation, cloud platforms, containers, infrastructure as code, monitoring, and production support.",
   about:
     "My work lives where releases, cloud platforms, and real production pressure meet. I like taking deployment paths that feel manual or scattered and turning them into systems teams can trust: clear pipelines, clean handoffs, visible checks, and reliable recovery. Across Salesforce, AWS, Azure, GitHub Actions, Terraform, containers, monitoring, Jira, and ServiceNow, I focus on making delivery calmer, faster, and easier to operate.",
-  availability: "Available for Salesforce DevOps and cloud platform roles",
+  availability: "Available for Cloud DevOps and Salesforce DevOps roles",
   resumeHref: "/Bathini-Arun-Kumar-DevOps-Resume.pdf",
   linkedin: "https://www.linkedin.com/in/arunbathiniab525/",
   email: "bathiniarunkumar525@gmail.com",
 };
+
+export const recruiterFit = [
+  { label: "Target roles", value: "Salesforce DevOps Engineer, Cloud DevOps Engineer, Azure/AWS DevOps Engineer" },
+  { label: "Core match", value: "DevOps Center, Vlocity/OmniStudio, GitHub Actions, Jenkins, Terraform, Kubernetes" },
+  { label: "Cloud depth", value: "AWS, Azure, AKS, EKS, Docker, Helm, CloudWatch, Prometheus, Grafana" },
+  { label: "Hiring signal", value: "Enterprise release ownership, production support, ServiceNow/Jira handoffs, fast follow-up" },
+] as const;
+
+export const impactMetrics = [
+  { value: "10+", label: "Years across IT, build, release, and DevOps" },
+  { value: "6+", label: "Years focused on DevOps and cloud delivery" },
+  { value: "5", label: "Enterprise environments supported across cloud and Salesforce" },
+  { value: "24h", label: "Typical response window for recruiter follow-up" },
+] as const;
 
 export const navLinks = [
   { href: "#experience", label: "Work" },

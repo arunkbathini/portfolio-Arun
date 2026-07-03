@@ -1,5 +1,5 @@
 import SiteHeader from "@/components/site-header";
-import Hero from "@/components/hero";
+import {Hero} from "@/components/hero";
 import {
   AboutSection,
   CertificationWall,

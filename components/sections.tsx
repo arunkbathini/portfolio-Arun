@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import {
@@ -7,8 +8,94 @@ import {
   skillGroups,
   profile,
   certifications,
+  impactMetrics,
 } from "@/content/site";
 import Reveal from "./reveal";
+
+type ContactIconName = "arrow" | "download" | "linkedin" | "location" | "globe" | "briefcase" | "clock";
+
+function ContactIcon({ name }: { name: ContactIconName }) {
+  const commonProps = {
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2.25,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+  };
+
+  if (name === "arrow") {
+    return (
+      <svg {...commonProps}>
+        <path d="M5 12h14" />
+        <path d="m13 6 6 6-6 6" />
+      </svg>
+    );
+  }
+
+  if (name === "download") {
+    return (
+      <svg {...commonProps}>
+        <path d="M12 3v12" />
+        <path d="m7 10 5 5 5-5" />
+        <path d="M5 19h14" />
+      </svg>
+    );
+  }
+
+  if (name === "linkedin") {
+    return (
+      <svg {...commonProps}>
+        <rect width="18" height="18" x="3" y="3" rx="4" />
+        <path d="M8 11v5" />
+        <path d="M8 8v.01" />
+        <path d="M12 16v-5" />
+        <path d="M16 16v-3a2 2 0 0 0-4 0" />
+      </svg>
+    );
+  }
+
+  if (name === "location") {
+    return (
+      <svg {...commonProps}>
+        <path d="M20 10c0 4.8-8 11-8 11S4 14.8 4 10a8 8 0 1 1 16 0Z" />
+        <circle cx="12" cy="10" r="2.5" />
+      </svg>
+    );
+  }
+
+  if (name === "globe") {
+    return (
+      <svg {...commonProps}>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M3 12h18" />
+        <path d="M12 3a14 14 0 0 1 0 18" />
+        <path d="M12 3a14 14 0 0 0 0 18" />
+      </svg>
+    );
+  }
+
+  if (name === "briefcase") {
+    return (
+      <svg {...commonProps}>
+        <path d="M10 6h4" />
+        <path d="M9 6V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1" />
+        <rect width="16" height="14" x="4" y="6" rx="2" />
+        <path d="M9 12h6" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...commonProps}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
 
 export function StackTicker() {
   return (
@@ -114,11 +201,26 @@ export function ExperienceShowcase() {
     { name: "ServiceNow", icon: "/logos/servicenow.svg", tone: "servicenow" },
   ];
 
+  const proofPoints = [
+    {
+      title: "Release risk reduction",
+      body: "Designed controlled promotion paths with scans, approvals, rollback planning, and ServiceNow/Jira handoffs.",
+    },
+    {
+      title: "Automation ownership",
+      body: "Built CI/CD workflows across Salesforce metadata, Vlocity/OmniStudio DataPacks, Azure, AWS, containers, and IaC.",
+    },
+    {
+      title: "Production reliability",
+      body: "Connected deployment activity to monitoring, alerts, incident response, and post-release support practices.",
+    },
+  ];
+
   return (
     <section className="exp-showcase" id="experience">
       <Reveal className="exp-showcase-heading">
         <h2>
-          <span className="exp-heading-main">Pushing Boundaries</span>{" "}
+          <span className="exp-heading-main">Enterprise DevOps</span>{" "}
           <span className="exp-heading-muted">since 2012</span>
         </h2>
       </Reveal>
@@ -139,9 +241,11 @@ export function ExperienceShowcase() {
                 style={{ "--delay": `${index * 0.12}s` } as CSSProperties}
               >
                 <span aria-hidden="true">
-                  <img
+                  <Image
                     src={tool.icon}
                     alt=""
+                    width={23}
+                    height={23}
                     loading="lazy"
                   />
                 </span>
@@ -153,12 +257,28 @@ export function ExperienceShowcase() {
 
         <Reveal className="exp-showcase-copy" delay={140}>
           <p>
-            DevOps Engineer with hands-on experience deploying applications and
-            platform changes across Salesforce, Azure, and AWS environments
-            using CI/CD pipelines. Skilled in writing GitHub Actions workflows
-            and provisioning cloud infrastructure with Terraform-based
-            Infrastructure as Code.
+            Recruiter-ready profile: Salesforce DevOps Engineer with enterprise
+            CI/CD ownership across Salesforce, AWS, Azure, Kubernetes, and
+            Terraform. Comfortable matching requirements for release automation,
+            infrastructure as code, environment promotion, monitoring, incident
+            response, and production support.
           </p>
+          <div className="impact-grid" aria-label="Hiring proof metrics">
+            {impactMetrics.slice(0, 3).map((metric) => (
+              <article key={metric.label}>
+                <strong>{metric.value}</strong>
+                <span>{metric.label}</span>
+              </article>
+            ))}
+          </div>
+          <div className="proof-panel" aria-label="Project proof points">
+            {proofPoints.map((point) => (
+              <article key={point.title}>
+                <h3>{point.title}</h3>
+                <p>{point.body}</p>
+              </article>
+            ))}
+          </div>
           <div className="exp-role-list">
             {experience.map((job) => (
               <article key={job.role}>
@@ -211,8 +331,8 @@ export function SkillProcessBoard() {
   return (
     <section className="skill-process" id="skills">
       <Reveal className="skill-process-heading">
-        <p>/ Skills Explained</p>
-        <h2>Here&apos;s how it works</h2>
+        <p>/ Delivery Workflow</p>
+        <h2>How I ship changes</h2>
       </Reveal>
       <div className="process-card-row">
         {cards.map((card, index) => (
@@ -276,17 +396,17 @@ export function AboutSection() {
   return (
     <section className="about-focus" id="about" aria-labelledby="about-title">
       <Reveal className="about-focus-copy">
-        <span className="about-kicker">About Me</span>
+        <span className="about-kicker">Recruiter Summary</span>
         <h1 id="about-title">
-          From build releases to cloud delivery, I turn complex deployments into
-          calmer systems.
+          Salesforce DevOps Engineer focused on reliable releases, cloud
+          automation, and production support.
         </h1>
         <p>
-          I am Arun Kumar Bathini, a Cloud DevOps Engineer with experience
-          across Salesforce, AWS, Azure, CI/CD automation, infrastructure as
-          code, containers, monitoring, and production support. My path has been
-          shaped by one steady goal: help teams ship changes with clearer
-          controls, stronger reliability, and fewer last-minute surprises.
+          I help teams move Salesforce and cloud changes from planning to
+          production with cleaner CI/CD pipelines, stronger release controls,
+          and practical support after deployment. My background spans AWS,
+          Azure, Terraform, Kubernetes, monitoring, Jira, ServiceNow, and
+          enterprise production handoffs.
         </p>
       </Reveal>
       <div className="about-role-arc" aria-label="Role overview">
@@ -326,8 +446,8 @@ export function CertificationWall() {
   return (
     <section className="cert-section" id="certifications">
       <Reveal className="cert-heading">
-        <p>Awards</p>
-        <h2>Certificate</h2>
+        <p>Credentials</p>
+        <h2>Certifications</h2>
       </Reveal>
       <div className="cert-band">
         {certifications.map((cert, i) => (
@@ -353,18 +473,45 @@ export function CertificationWall() {
 }
 
 export function ContactCTA() {
+  const contactHighlights = [
+    { label: "Austin, TX", icon: "location" },
+    { label: "Remote or hybrid", icon: "globe" },
+    { label: "C2C or contract-to-hire", icon: "briefcase" },
+    { label: "Replies within a day", icon: "clock" },
+  ] as const;
+
   return (
     <section className="contact contact-cta" id="contact">
       <Reveal className="contact-cta-inner">
-        <h2>Let&apos;s Make It Happen</h2>
+        <div className="contact-status">
+          <span className="pulse-dot" aria-hidden="true" />
+          Available for new roles
+        </div>
+        <h2>Have a role in mind?</h2>
         <p>
-          always open to new opportunities, collaborations, and cloud delivery
-          challenges. Let&apos;s work together to build reliable systems.
+          Available for Cloud DevOps and Salesforce DevOps roles.
+          <span>Share the details, or grab my resume for a quick skills match.</span>
         </p>
+        <div className="contact-direct" aria-label="Availability details">
+          {contactHighlights.map((item) => (
+            <span key={item.label}>
+              <ContactIcon name={item.icon} />
+              {item.label}
+            </span>
+          ))}
+        </div>
         <div className="contact-actions">
           <a className="contact-pill" href={`mailto:${profile.email}`}>
-            <span aria-hidden="true">-&gt;</span>
-            Get In Touch
+            <ContactIcon name="arrow" />
+            Get in touch
+          </a>
+          <a
+            className="contact-pill resume"
+            href={profile.resumeHref}
+            download
+          >
+            <ContactIcon name="download" />
+            Download resume
           </a>
           <a
             className="contact-pill secondary"
@@ -372,9 +519,14 @@ export function ContactCTA() {
             target="_blank"
             rel="noopener noreferrer"
           >
+            <ContactIcon name="linkedin" />
             LinkedIn
           </a>
         </div>
+        <p className="contact-email">
+          or email me directly at{" "}
+          <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        </p>
       </Reveal>
     </section>
   );

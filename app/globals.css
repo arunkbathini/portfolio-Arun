@@ -7,23 +7,23 @@
   Edit colors/fonts in one place; the whole site follows.
 */
 @theme {
-  --color-ink: #151515;
-  --color-muted: #626262;
-  --color-paper: #fff7ec;
+  --color-ink: #111827;
+  --color-muted: #526071;
+  --color-paper: #f6f8fb;
   --color-card: #ffffff;
-  --color-line: rgba(21, 21, 21, 0.12);
+  --color-line: rgba(17, 24, 39, 0.12);
 
-  /* Blueprint structural line — the signature accent */
-  --color-blue: #3c5bff;
+  /* Enterprise cloud accents */
+  --color-blue: #2563eb;
 
-  /* Collage accents */
-  --color-pink: #ff4fa3;
-  --color-mint: #37d7a0;
-  --color-yellow: #ffd84a;
-  --color-orange: #ff8a3d;
-  --color-violet: #8f5cff;
+  /* Controlled secondary accents */
+  --color-pink: #db2777;
+  --color-mint: #16a34a;
+  --color-yellow: #f59e0b;
+  --color-orange: #ea580c;
+  --color-violet: #7c3aed;
 
-  --shadow-board: 0 24px 70px rgba(21, 21, 21, 0.13);
+  --shadow-board: 0 24px 70px rgba(15, 23, 42, 0.12);
 
   /* Font families wired to next/font CSS variables (see app/layout.tsx) */
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
@@ -39,12 +39,15 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: clamp(86px, 8vw, 126px);
 }
 
 body {
   margin: 0;
   color: var(--color-ink);
-  background: var(--color-paper);
+  background:
+    radial-gradient(circle at 14% 0%, rgba(37, 99, 235, 0.08), transparent 28%),
+    var(--color-paper);
   font-family: var(--font-body);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
