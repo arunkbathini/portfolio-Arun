@@ -13,7 +13,13 @@ export default function SiteFooter() {
               {link.label}
             </a>
           ))}
-          <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">
+          <a
+            href={profile.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-analytics-event="linkedin_click"
+            data-analytics-label="Footer LinkedIn"
+          >
             LinkedIn
           </a>
         </nav>

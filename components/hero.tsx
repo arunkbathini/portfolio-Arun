@@ -71,10 +71,22 @@ export function Hero() {
             <a className="btn btn-primary" href="#experience" onClick={(e) => scrollToHash(e, "#experience")}>
               View Experience
             </a>
-            <a className="btn btn-outline" href={profile.resumeHref} download>
+            <a
+              className="btn btn-outline"
+              href={profile.resumeHref}
+              download
+              data-analytics-event="resume_download"
+              data-analytics-label="Hero resume"
+            >
               Download Resume
             </a>
-            <a className="btn btn-outline" href="#contact" onClick={(e) => scrollToHash(e, "#contact")}>
+            <a
+              className="btn btn-outline"
+              href="#contact"
+              onClick={(e) => scrollToHash(e, "#contact")}
+              data-analytics-event="contact_click"
+              data-analytics-label="Hero contact"
+            >
               Contact
             </a>
           </div>

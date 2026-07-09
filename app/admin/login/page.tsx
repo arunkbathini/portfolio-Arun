@@ -15,6 +15,9 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
   }
 
   const { error } = await searchParams;
+  const errorMessage = error === "rate-limit"
+    ? "Too many attempts. Wait a few minutes and try again."
+    : "Invalid password. Try again.";
 
   return (
     <main style={{ minHeight: "100dvh", display: "grid", placeItems: "center", padding: "24px" }}>
@@ -34,7 +37,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
         </p>
         {error ? (
           <p style={{ margin: "0 0 12px", color: "#fda4af", fontSize: "0.92rem" }}>
-            Invalid password. Try again.
+            {errorMessage}
           </p>
         ) : null}
         <form action="/api/admin/login" method="post" style={{ display: "grid", gap: "12px" }}>

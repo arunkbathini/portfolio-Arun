@@ -72,7 +72,13 @@ export default async function CaseStudyPage({
             </div>
             <div className="portfolio-grid">
               {related.map((s) => (
-                <Link key={s.slug} href={`/case-studies/${s.slug}`} className="portfolio-card">
+                <Link
+                  key={s.slug}
+                  href={`/case-studies/${s.slug}`}
+                  className="portfolio-card"
+                  data-analytics-event="case_study_open"
+                  data-analytics-label={s.title}
+                >
                   <span className="card-number">{s.role}</span>
                   <h3>{s.title}</h3>
                   <p>{s.summary}</p>

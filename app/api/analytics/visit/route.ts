@@ -6,6 +6,8 @@ export const runtime = "nodejs";
 type Body = {
   pathname?: string;
   referrer?: string;
+  eventName?: string;
+  eventLabel?: string;
 };
 
 export async function POST(request: Request) {
@@ -18,7 +20,9 @@ export async function POST(request: Request) {
 
   const pathname = typeof body.pathname === "string" ? body.pathname : "/";
   const referrer = typeof body.referrer === "string" ? body.referrer : "Direct";
+  const eventName = typeof body.eventName === "string" ? body.eventName.slice(0, 80) : undefined;
+  const eventLabel = typeof body.eventLabel === "string" ? body.eventLabel.slice(0, 160) : undefined;
 
-  await captureVisit({ pathname, referrer });
+  await captureVisit({ pathname, referrer, eventName, eventLabel });
   return NextResponse.json({ ok: true });
 }

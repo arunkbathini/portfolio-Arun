@@ -27,6 +27,8 @@ export default function CaseStudiesIndex() {
                 key={study.slug}
                 href={`/case-studies/${study.slug}`}
                 className="portfolio-card"
+                data-analytics-event="case_study_open"
+                data-analytics-label={study.title}
               >
                 <span className="card-number">{study.role}</span>
                 <h3>{study.title}</h3>

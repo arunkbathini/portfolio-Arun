@@ -32,7 +32,12 @@ export default function SiteHeader() {
             );
           })}
         </nav>
-        <a className="nav-cta" href={`mailto:${profile.email}`}>
+        <a
+          className="nav-cta"
+          href={`mailto:${profile.email}`}
+          data-analytics-event="email_click"
+          data-analytics-label="Header get in touch"
+        >
           Get in touch
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M7 17 17 7" />

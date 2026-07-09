@@ -61,6 +61,11 @@ export default function OpportunityDesk() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      if (res.status === 429) {
+        setStatus("error");
+        setNote("Too many attempts from this connection. Please try again in a few minutes.");
+        return;
+      }
       if (!res.ok) throw new Error("Request failed");
       const json = await res.json();
       if (json.delivered) {
@@ -186,6 +191,8 @@ export default function OpportunityDesk() {
                 className="button primary"
                 type="submit"
                 disabled={status === "sending"}
+                data-analytics-event="opportunity_submit"
+                data-analytics-label="Opportunity Desk"
               >
                 {status === "sending" ? "Sending…" : "Send to Arun"}
               </button>

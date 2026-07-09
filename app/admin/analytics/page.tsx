@@ -1,9 +1,16 @@
+import type { CSSProperties } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAnalyticsSummary } from "@/lib/visitor-analytics";
 import { isAdminSession } from "@/lib/admin-session";
+import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
+
+type CountItem = {
+  label: string;
+  count: number;
+};
 
 export default async function AdminAnalyticsPage() {
   const cookieStore = await cookies();
@@ -12,147 +19,127 @@ export default async function AdminAnalyticsPage() {
   }
 
   const summary = await getAnalyticsSummary();
+  const maxDaily = Math.max(...summary.dailyVisits.map((item) => item.count), 1);
 
   return (
-    <main style={{ padding: "28px clamp(16px,4vw,42px) 40px", maxWidth: "1100px", margin: "0 auto" }}>
-      <header style={{ display: "flex", justifyContent: "space-between", gap: "12px", alignItems: "center", marginBottom: "20px" }}>
+    <main className={styles.dashboard}>
+      <header className={styles.header}>
         <div>
-          <p style={{ margin: 0, color: "rgba(248,247,251,0.66)", textTransform: "uppercase", letterSpacing: "0.08em", fontSize: "0.76rem" }}>
-            Private
+          <p className={styles.eyebrow}>Private analytics</p>
+          <h1>Visitor analytics dashboard</h1>
+          <p className={styles.subhead}>
+            Recruiter-focused traffic, conversion events, and filtered activity.
           </p>
-          <h1 style={{ margin: "6px 0 0", fontSize: "clamp(1.4rem,2.8vw,2rem)" }}>Visitor analytics dashboard</h1>
         </div>
-        <form action="/api/admin/logout" method="post">
-          <button
-            type="submit"
-            style={{
-              minHeight: "38px",
-              padding: "0 14px",
-              borderRadius: "999px",
-              border: "1px solid rgba(255,255,255,0.2)",
-              background: "rgba(255,255,255,0.05)",
-              color: "#fff",
-              cursor: "pointer",
-            }}
-          >
-            Sign out
-          </button>
-        </form>
+        <div className={styles.headerActions}>
+          <a className={styles.button} href="/api/admin/analytics/export">
+            Export CSV
+          </a>
+          <form action="/api/admin/logout" method="post">
+            <button className={styles.button} type="submit">
+              Sign out
+            </button>
+          </form>
+        </div>
       </header>
 
-      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: "12px", marginBottom: "20px" }}>
-        <MetricCard label="Total visits" value={String(summary.totalVisits)} />
-        <MetricCard label="Unique visitors" value={String(summary.uniqueVisitors)} />
-        <MetricCard label="Countries" value={String(summary.countryCount)} />
+      <section className={styles.metricGrid} aria-label="Analytics overview">
+        <MetricCard label="Page views" value={summary.totalVisits} detail={`${summary.visits7Days} in 7 days`} />
+        <MetricCard label="Unique visitors" value={summary.uniqueVisitors} detail={`${summary.countryCount} known countries`} />
+        <MetricCard label="Recruiter actions" value={summary.conversionEvents} detail="Resume, email, LinkedIn, case studies" />
+        <MetricCard label="Filtered records" value={summary.botFiltered} detail="Admin, bots, local tests" />
       </section>
 
-      <section
-        style={{
-          marginBottom: "20px",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: "16px",
-          overflow: "hidden",
-          background: "rgba(255,255,255,0.03)",
-        }}
-      >
-        <h2 style={{ margin: 0, padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", fontSize: "1rem" }}>Top locations</h2>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ textAlign: "left", color: "rgba(248,247,251,0.62)" }}>
-              <th style={{ padding: "10px 16px", fontWeight: 600 }}>Location</th>
-              <th style={{ padding: "10px 16px", fontWeight: 600, width: "100px" }}>Visits</th>
-            </tr>
-          </thead>
-          <tbody>
-            {summary.topLocations.length > 0 ? (
-              summary.topLocations.map((item) => (
-                <tr key={item.location} style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                  <td style={{ padding: "10px 16px" }}>{item.location}</td>
-                  <td style={{ padding: "10px 16px" }}>{item.count}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={2} style={{ padding: "14px 16px", color: "rgba(248,247,251,0.62)" }}>
-                  No visit data yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <section className={styles.panel}>
+        <div className={styles.panelHeader}>
+          <div>
+            <h2>30-day traffic</h2>
+            <p>Human page views after bot/admin filtering.</p>
+          </div>
+          <time>{new Date(summary.lastUpdated).toLocaleString()}</time>
+        </div>
+        <div className={styles.dayChart} aria-label="Daily visits">
+          {summary.dailyVisits.length > 0 ? (
+            summary.dailyVisits.map((item) => (
+              <div className={styles.dayBar} key={item.date}>
+                <span
+                  className={styles.bar}
+                  style={{ "--bar-height": `${Math.max((item.count / maxDaily) * 100, 8)}%` } as CSSProperties}
+                  aria-label={`${item.date}: ${item.count} visits`}
+                />
+                <small>{item.date.slice(5)}</small>
+              </div>
+            ))
+          ) : (
+            <p className={styles.empty}>No human page views yet.</p>
+          )}
+        </div>
       </section>
 
-      <section
-        style={{
-          marginBottom: "20px",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: "16px",
-          overflow: "hidden",
-          background: "rgba(255,255,255,0.03)",
-        }}
-      >
-        <h2 style={{ margin: 0, padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", fontSize: "1rem" }}>Countries</h2>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ textAlign: "left", color: "rgba(248,247,251,0.62)" }}>
-              <th style={{ padding: "10px 16px", fontWeight: 600 }}>Country</th>
-              <th style={{ padding: "10px 16px", fontWeight: 600, width: "100px" }}>Visits</th>
-            </tr>
-          </thead>
-          <tbody>
-            {summary.topCountries.length > 0 ? (
-              summary.topCountries.map((item) => (
-                <tr key={item.country} style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                  <td style={{ padding: "10px 16px" }}>{item.country}</td>
-                  <td style={{ padding: "10px 16px" }}>{item.count}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={2} style={{ padding: "14px 16px", color: "rgba(248,247,251,0.62)" }}>
-                  No country data yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <section className={styles.twoColumn}>
+        <Leaderboard title="Top pages" items={summary.topPages} empty="No page views yet." />
+        <Leaderboard title="Recruiter actions" items={summary.eventBreakdown} empty="No conversion events yet." />
       </section>
 
-      <section
-        style={{
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: "16px",
-          overflow: "hidden",
-          background: "rgba(255,255,255,0.03)",
-        }}
-      >
-        <h2 style={{ margin: 0, padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", fontSize: "1rem" }}>Recent visits</h2>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "720px" }}>
+      <section className={styles.threeColumn}>
+        <Leaderboard title="Sources" items={summary.topSources} empty="No referrers yet." compact />
+        <Leaderboard title="Devices" items={summary.deviceBreakdown} empty="No device data yet." compact />
+        <Leaderboard title="Browsers" items={summary.browserBreakdown} empty="No browser data yet." compact />
+      </section>
+
+      <section className={styles.twoColumn}>
+        <TablePanel
+          title="Top locations"
+          columns={["Location", "Visits"]}
+          rows={summary.topLocations.map((item) => [item.location, String(item.count)])}
+          empty="No known locations yet. Local/private IP traffic appears as Unknown."
+        />
+        <TablePanel
+          title="Countries"
+          columns={["Country", "Visits"]}
+          rows={summary.topCountries.map((item) => [item.country, String(item.count)])}
+          empty="No known country data yet."
+        />
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHeader}>
+          <div>
+            <h2>Recent activity</h2>
+            <p>Filtered list: human-facing page views and conversion events.</p>
+          </div>
+        </div>
+        <div className={styles.tableWrap}>
+          <table className={styles.table}>
             <thead>
-              <tr style={{ textAlign: "left", color: "rgba(248,247,251,0.62)" }}>
-                <th style={{ padding: "10px 16px", fontWeight: 600 }}>Time</th>
-                <th style={{ padding: "10px 16px", fontWeight: 600 }}>Page</th>
-                <th style={{ padding: "10px 16px", fontWeight: 600 }}>Location</th>
-                <th style={{ padding: "10px 16px", fontWeight: 600 }}>Referrer</th>
+              <tr>
+                <th>Time</th>
+                <th>Type</th>
+                <th>Page / Event</th>
+                <th>Source</th>
+                <th>Device</th>
+                <th>Location</th>
               </tr>
             </thead>
             <tbody>
               {summary.recentVisits.length > 0 ? (
                 summary.recentVisits.map((visit) => (
-                  <tr key={visit.id} style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                    <td style={{ padding: "10px 16px", whiteSpace: "nowrap" }}>{new Date(visit.timestamp).toLocaleString()}</td>
-                    <td style={{ padding: "10px 16px" }}>{visit.pathname}</td>
-                    <td style={{ padding: "10px 16px" }}>{[visit.city, visit.region, visit.country].filter((item) => item && item !== "Unknown").join(", ") || "Unknown"}</td>
-                    <td style={{ padding: "10px 16px", maxWidth: "320px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {visit.referrer}
+                  <tr key={visit.id}>
+                    <td>{new Date(visit.timestamp).toLocaleString()}</td>
+                    <td>{visit.type ?? "pageview"}</td>
+                    <td>
+                      <strong>{visit.eventName ?? visit.pathname}</strong>
+                      {visit.eventLabel ? <span>{visit.eventLabel}</span> : null}
                     </td>
+                    <td>{visit.source ?? visit.referrer}</td>
+                    <td>{visit.device ?? "Unknown"}</td>
+                    <td>{[visit.city, visit.region, visit.country].filter((item) => item && item !== "Unknown").join(", ") || "Unknown"}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} style={{ padding: "14px 16px", color: "rgba(248,247,251,0.62)" }}>
-                    No visit data yet.
+                  <td colSpan={6} className={styles.emptyCell}>
+                    No filtered activity yet.
                   </td>
                 </tr>
               )}
@@ -164,18 +151,99 @@ export default async function AdminAnalyticsPage() {
   );
 }
 
-function MetricCard({ label, value }: { label: string; value: string }) {
+function MetricCard({ label, value, detail }: { label: string; value: number; detail: string }) {
   return (
-    <article
-      style={{
-        padding: "14px 16px",
-        borderRadius: "14px",
-        border: "1px solid rgba(255,255,255,0.12)",
-        background: "rgba(255,255,255,0.04)",
-      }}
-    >
-      <p style={{ margin: 0, color: "rgba(248,247,251,0.66)", fontSize: "0.82rem" }}>{label}</p>
-      <p style={{ margin: "8px 0 0", fontSize: "1.75rem", fontWeight: 700 }}>{value}</p>
+    <article className={styles.metricCard}>
+      <p>{label}</p>
+      <strong>{value}</strong>
+      <span>{detail}</span>
     </article>
+  );
+}
+
+function Leaderboard({
+  title,
+  items,
+  empty,
+  compact = false,
+}: {
+  title: string;
+  items: CountItem[];
+  empty: string;
+  compact?: boolean;
+}) {
+  const max = Math.max(...items.map((item) => item.count), 1);
+  return (
+    <section className={styles.panel}>
+      <div className={styles.panelHeader}>
+        <h2>{title}</h2>
+      </div>
+      <div className={compact ? styles.compactList : styles.rankList}>
+        {items.length > 0 ? (
+          items.map((item) => (
+            <div className={styles.rankItem} key={item.label}>
+              <div>
+                <span>{item.label}</span>
+                <strong>{item.count}</strong>
+              </div>
+              <span
+                className={styles.rankBar}
+                style={{ "--bar-width": `${Math.max((item.count / max) * 100, 5)}%` } as CSSProperties}
+              />
+            </div>
+          ))
+        ) : (
+          <p className={styles.empty}>{empty}</p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function TablePanel({
+  title,
+  columns,
+  rows,
+  empty,
+}: {
+  title: string;
+  columns: string[];
+  rows: string[][];
+  empty: string;
+}) {
+  return (
+    <section className={styles.panel}>
+      <div className={styles.panelHeader}>
+        <h2>{title}</h2>
+      </div>
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              {columns.map((column) => (
+                <th key={column}>{column}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length > 0 ? (
+              rows.map((row) => (
+                <tr key={row.join("-")}>
+                  {row.map((cell) => (
+                    <td key={cell}>{cell}</td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length} className={styles.emptyCell}>
+                  {empty}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }

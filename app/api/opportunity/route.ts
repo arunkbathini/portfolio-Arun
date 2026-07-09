@@ -15,11 +15,43 @@ import { profile } from "@/content/site";
 
 type Payload = Record<string, string>;
 
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_SUBMISSIONS = 4;
+const submissions = new Map<string, { count: number; resetAt: number }>();
+
 function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function getClientKey(request: Request) {
+  const forwarded = request.headers.get("x-forwarded-for");
+  return (forwarded?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "local").toLowerCase();
+}
+
+function checkRateLimit(request: Request) {
+  const now = Date.now();
+  const key = getClientKey(request);
+  const current = submissions.get(key);
+  if (!current || current.resetAt <= now) {
+    submissions.set(key, { count: 1, resetAt: now + WINDOW_MS });
+    return null;
+  }
+  if (current.count >= MAX_SUBMISSIONS) {
+    return Math.ceil((current.resetAt - now) / 1000);
+  }
+  current.count += 1;
+  return null;
+}
+
 export async function POST(request: Request) {
+  const retryAfter = checkRateLimit(request);
+  if (retryAfter) {
+    return NextResponse.json(
+      { error: "Too many submissions. Please try again later." },
+      { status: 429, headers: { "Retry-After": String(retryAfter) } }
+    );
+  }
+
   let data: Payload;
   try {
     data = (await request.json()) as Payload;

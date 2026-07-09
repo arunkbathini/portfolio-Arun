@@ -270,7 +270,12 @@ export function WorkSkillsSection() {
             if (project.caseStudy) {
               return (
                 <Reveal key={project.number} delay={i * 80} variant="card3d" className={`portfolio-card ${project.variant ?? "default"}`}>
-                  <Link href={`/case-studies/${project.caseStudy}`} style={{ display: "contents" }}>
+                  <Link
+                    href={`/case-studies/${project.caseStudy}`}
+                    style={{ display: "contents" }}
+                    data-analytics-event="case_study_open"
+                    data-analytics-label={project.title}
+                  >
                     {content}
                   </Link>
                 </Reveal>
@@ -432,7 +437,12 @@ export function ShowcaseSection() {
       </Reveal>
       {featured.caseStudy && (
         <p className="showcase-caption">
-          <Link className="card-link" href={`/case-studies/${featured.caseStudy}`}>
+          <Link
+            className="card-link"
+            href={`/case-studies/${featured.caseStudy}`}
+            data-analytics-event="case_study_open"
+            data-analytics-label={`Featured ${featured.title}`}
+          >
             Read the full case study →
           </Link>
         </p>
@@ -613,11 +623,22 @@ export function ContactCTA() {
           ))}
         </div>
         <div className="contact-actions">
-          <a className="contact-pill" href={`mailto:${profile.email}`}>
+          <a
+            className="contact-pill"
+            href={`mailto:${profile.email}`}
+            data-analytics-event="email_click"
+            data-analytics-label="Contact CTA email"
+          >
             <Icon name="arrow" />
             Get in touch
           </a>
-          <a className="contact-pill resume" href={profile.resumeHref} download>
+          <a
+            className="contact-pill resume"
+            href={profile.resumeHref}
+            download
+            data-analytics-event="resume_download"
+            data-analytics-label="Contact CTA resume"
+          >
             <Icon name="download" />
             Download resume
           </a>
@@ -626,13 +647,22 @@ export function ContactCTA() {
             href={profile.linkedin}
             target="_blank"
             rel="noopener noreferrer"
+            data-analytics-event="linkedin_click"
+            data-analytics-label="Contact CTA LinkedIn"
           >
             <Icon name="linkedin" />
             LinkedIn
           </a>
         </div>
         <p className="contact-email">
-          or email me directly at <a href={`mailto:${profile.email}`}>{profile.email}</a>
+          or email me directly at{" "}
+          <a
+            href={`mailto:${profile.email}`}
+            data-analytics-event="email_click"
+            data-analytics-label="Direct email text"
+          >
+            {profile.email}
+          </a>
         </p>
       </Reveal>
     </section>
