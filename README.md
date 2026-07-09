@@ -61,7 +61,8 @@ Deploy on **Vercel** (connect the GitHub repo) to get preview deploys per PR for
 
 ## Before you go live — replace these placeholders
 
-- [ ] `https://your-domain.com` in `app/layout.tsx`, `app/sitemap.ts`, `app/robots.ts`
-- [ ] Drop your résumé at `public/Bathini-Arun-Kumar-DevOps-Resume.pdf` (the hero links to it)
+- [ ] Set the real production domain in **one place**: `NEXT_PUBLIC_SITE_URL` (env var) or the fallback in `content/site.ts` → `siteUrl`. It feeds `app/layout.tsx`, `app/sitemap.ts`, and `app/robots.ts` automatically.
+- [ ] Drop your résumé at `public/Bathini-Arun-Kumar-DevOps-Resume.pdf` (the hero and contact CTA both link to it — currently 404s)
 - [ ] Update roles/titles in `content/site.ts` to match your current position
-- [ ] Add an OG image (`app/opengraph-image.png` or a generated route) for link previews
+- [x] Favicon (`app/icon.svg`) and OG image (`app/opengraph-image.tsx`, generated from `content/site.ts` at build time) are already wired up
+- [ ] If you want the "Opportunity Desk" form to email you directly instead of falling back to `mailto:`, set `RESEND_API_KEY` and `FROM_EMAIL` (see `.env.example`)

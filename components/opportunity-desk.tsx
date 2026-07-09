@@ -102,7 +102,7 @@ export default function OpportunityDesk() {
         <h2>Recruiters and leaders can send role details directly.</h2>
       </Reveal>
       <div className="opportunity-layout">
-        <Reveal as="div">
+        <Reveal as="div" variant="card3d">
           <form className="opportunity-form" onSubmit={handleSubmit}>
             <div
               className="persona-grid"
@@ -198,7 +198,7 @@ export default function OpportunityDesk() {
             </p>
           </form>
         </Reveal>
-        <Reveal as="aside" className="opportunity-preview" delay={120}>
+        <Reveal as="aside" className="opportunity-preview" variant="card3d" delay={120}>
           <span>What Arun receives</span>
           <strong>One tidy email with the role details.</strong>
           <p style={{ margin: 0 }}>

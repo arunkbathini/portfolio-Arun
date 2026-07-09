@@ -1,11 +1,12 @@
 import SiteHeader from "@/components/site-header";
-import {Hero} from "@/components/hero";
+import SiteFooter from "@/components/site-footer";
+import { Hero } from "@/components/hero";
 import {
-  AboutSection,
+  Marquee,
+  TrustSection,
+  ExperienceShowcase,
   CertificationWall,
   ContactCTA,
-  ExperienceShowcase,
-  SkillProcessBoard,
 } from "@/components/sections";
 
 export default function Home() {
@@ -14,12 +15,13 @@ export default function Home() {
       <SiteHeader />
       <main>
         <Hero />
+        <Marquee />
+        <TrustSection />
         <ExperienceShowcase />
-        <SkillProcessBoard />
-        <AboutSection />
         <CertificationWall />
         <ContactCTA />
       </main>
+      <SiteFooter />
     </div>
   );
 }
