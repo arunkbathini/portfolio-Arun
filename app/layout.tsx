@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Fraunces, Space_Grotesk, Inter, JetBrains_Mono, Geist } from "next/font/google";
 import { profile, siteUrl } from "@/content/site";
+import VisitTracker from "@/components/visit-tracker";
 import "./globals.css";
 import "./components.css";
 import { cn } from "@/lib/utils";
@@ -67,7 +68,10 @@ export default function RootLayout({
       lang="en"
       className={cn(spaceGrotesk.variable, inter.variable, jetbrainsMono.variable, anton.variable, fraunces.variable, "font-sans", geist.variable)}
     >
-      <body>{children}</body>
+      <body>
+        <VisitTracker />
+        {children}
+      </body>
     </html>
   );
 }
