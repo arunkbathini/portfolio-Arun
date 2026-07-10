@@ -30,19 +30,86 @@ type StoreSchema = {
   visits: VisitRecord[];
 };
 
+export type CountItem = {
+  label: string;
+  count: number;
+};
+
+export type AnalyticsSummary = {
+  totalVisits: number;
+  rawRecords: number;
+  uniqueVisitors: number;
+  countryCount: number;
+  visitsToday: number;
+  visits7Days: number;
+  visits30Days: number;
+  conversionEvents: number;
+  botFiltered: number;
+  lastUpdated: string;
+  storageMode: "Vercel KV" | "Local JSON";
+  topPages: CountItem[];
+  topSources: CountItem[];
+  deviceBreakdown: CountItem[];
+  browserBreakdown: CountItem[];
+  eventBreakdown: CountItem[];
+  dailyVisits: { date: string; count: number }[];
+  topCountries: { country: string; count: number }[];
+  topLocations: { location: string; count: number }[];
+  recentVisits: VisitRecord[];
+};
+
 const MAX_VISITS = 5000;
+const KV_ANALYTICS_KEY = process.env.ANALYTICS_KV_KEY ?? "portfolio:visitor-analytics:v1";
 const IGNORED_PATH_PREFIXES = ["/admin", "/case-studies"];
 const IGNORED_EVENTS = new Set(["case_study_open"]);
 let writeQueue = Promise.resolve();
 
+function getKvConfig() {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  return { url: url.replace(/\/$/, ""), token };
+}
+
+export function getAnalyticsStorageMode(): AnalyticsSummary["storageMode"] {
+  return getKvConfig() ? "Vercel KV" : "Local JSON";
+}
+
 function getStorePath() {
   return (
     process.env.ANALYTICS_DATA_FILE ??
-    path.join(process.cwd(), ".data", "visitor-analytics.json")
+    (process.env.VERCEL
+      ? path.join("/tmp", "visitor-analytics.json")
+      : path.join(process.cwd(), ".data", "visitor-analytics.json"))
   );
 }
 
 async function readStore(): Promise<StoreSchema> {
+  const kv = getKvConfig();
+  if (kv) {
+    const response = await fetch(`${kv.url}/lrange/${encodeURIComponent(KV_ANALYTICS_KEY)}/0/${MAX_VISITS - 1}`, {
+      headers: { Authorization: `Bearer ${kv.token}` },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Analytics KV read failed with status ${response.status}`);
+    }
+
+    const payload = (await response.json()) as { result?: string[] };
+    const visits = (payload.result ?? [])
+      .map((item) => {
+        try {
+          return JSON.parse(item) as VisitRecord;
+        } catch {
+          return null;
+        }
+      })
+      .filter((item): item is VisitRecord => Boolean(item));
+
+    return { visits };
+  }
+
   const filePath = getStorePath();
   try {
     const raw = await readFile(filePath, "utf8");
@@ -60,6 +127,28 @@ async function readStore(): Promise<StoreSchema> {
 }
 
 async function writeStore(data: StoreSchema) {
+  const kv = getKvConfig();
+  if (kv) {
+    const response = await fetch(`${kv.url}/pipeline`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${kv.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([
+        ["DEL", KV_ANALYTICS_KEY],
+        ...data.visits.map((visit) => ["RPUSH", KV_ANALYTICS_KEY, JSON.stringify(visit)]),
+        ["LTRIM", KV_ANALYTICS_KEY, 0, MAX_VISITS - 1],
+      ]),
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Analytics KV write failed with status ${response.status}`);
+    }
+    return;
+  }
+
   const filePath = getStorePath();
   await mkdir(path.dirname(filePath), { recursive: true });
   const tmpPath = `${filePath}.${process.pid}.tmp`;
@@ -74,6 +163,34 @@ async function updateStore(updater: (store: StoreSchema) => StoreSchema | Promis
     await writeStore(nextStore);
   });
   return writeQueue;
+}
+
+async function appendVisit(visit: VisitRecord) {
+  const kv = getKvConfig();
+  if (kv) {
+    const response = await fetch(`${kv.url}/pipeline`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${kv.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([
+        ["LPUSH", KV_ANALYTICS_KEY, JSON.stringify(visit)],
+        ["LTRIM", KV_ANALYTICS_KEY, 0, MAX_VISITS - 1],
+      ]),
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Analytics KV append failed with status ${response.status}`);
+    }
+    return;
+  }
+
+  await updateStore((store) => {
+    const nextVisits = [visit, ...store.visits].slice(0, MAX_VISITS);
+    return { visits: nextVisits };
+  });
 }
 
 function getClientIp(rawHeaders: Headers) {
@@ -201,6 +318,20 @@ async function lookupLocation(ip: string): Promise<LocationData> {
   };
 }
 
+async function safeLookupLocation(ip: string): Promise<LocationData> {
+  try {
+    return await lookupLocation(ip);
+  } catch {
+    return {
+      country: "Unknown",
+      region: "Unknown",
+      city: "Unknown",
+      latitude: null,
+      longitude: null,
+    };
+  }
+}
+
 export async function captureVisit(input: {
   pathname?: string;
   referrer?: string;
@@ -210,7 +341,7 @@ export async function captureVisit(input: {
   const hdrs = await headers();
   const ua = hdrs.get("user-agent") ?? "Unknown";
   const ip = getClientIp(hdrs);
-  const location = await lookupLocation(ip);
+  const location = await safeLookupLocation(ip);
   const visit: VisitRecord = {
     id: crypto.randomUUID(),
     type: input.eventName ? "event" : "pageview",
@@ -232,10 +363,7 @@ export async function captureVisit(input: {
     isBot: isBotTraffic(ua),
   };
 
-  await updateStore((store) => {
-    const nextVisits = [visit, ...store.visits].slice(0, MAX_VISITS);
-    return { visits: nextVisits };
-  });
+  await appendVisit(visit);
   return visit;
 }
 
@@ -246,7 +374,7 @@ function labelForLocation(visit: VisitRecord) {
   return [city, region, country].filter(Boolean).join(", ");
 }
 
-export async function getAnalyticsSummary() {
+export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   const store = await readStore();
   const visits = store.visits.map((visit) => ({
     ...visit,
@@ -326,6 +454,7 @@ export async function getAnalyticsSummary() {
     conversionEvents: events.length,
     botFiltered: visits.length - humanVisits.length,
     lastUpdated: new Date().toISOString(),
+    storageMode: getAnalyticsStorageMode(),
     topPages: ranked(pathMap),
     topSources: ranked(sourceMap),
     deviceBreakdown: ranked(deviceMap),

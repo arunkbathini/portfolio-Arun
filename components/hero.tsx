@@ -58,7 +58,7 @@ export function Hero() {
           </h1>
 
           <p className="hero-lede hero-cloud-lede">
-            Cloud DevOps Engineer with <strong>13+ years</strong> turning fragile deployments
+            Cloud DevOps Engineer with <strong>10+ years</strong> turning fragile deployments
             into boring, repeatable ones. AWS and Azure, Kubernetes and Terraform,
             pipelines that actually gate on quality.
           </p>

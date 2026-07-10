@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getAnalyticsSummary } from "@/lib/visitor-analytics";
 import { isAdminSession } from "@/lib/admin-session";
 import styles from "./page.module.css";
+import LiveRefresh from "./live-refresh";
 
 export const dynamic = "force-dynamic";
 
@@ -25,13 +26,14 @@ export default async function AdminAnalyticsPage() {
     <main className={styles.dashboard}>
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>Private analytics</p>
-          <h1>Visitor analytics dashboard</h1>
+          <p className={styles.eyebrow}>Live visitor data</p>
+          <h1>Visitor dashboard</h1>
           <p className={styles.subhead}>
-            Recruiter-focused traffic, conversion events, and filtered activity.
+            Updates every 10 seconds. Tracking page views, clicks, sources, devices, and locations.
           </p>
         </div>
         <div className={styles.headerActions}>
+          <LiveRefresh />
           <a className={styles.button} href="/api/admin/analytics/export">
             Export CSV
           </a>
@@ -44,19 +46,22 @@ export default async function AdminAnalyticsPage() {
       </header>
 
       <section className={styles.metricGrid} aria-label="Analytics overview">
-        <MetricCard label="Page views" value={summary.totalVisits} detail={`${summary.visits7Days} in 7 days`} />
-        <MetricCard label="Unique visitors" value={summary.uniqueVisitors} detail={`${summary.countryCount} known countries`} />
-        <MetricCard label="Recruiter actions" value={summary.conversionEvents} detail="Resume, email, LinkedIn, opportunity form" />
-        <MetricCard label="Filtered records" value={summary.botFiltered} detail="Admin, bots, local tests" />
+        <MetricCard label="Views" value={summary.totalVisits} detail={`${summary.visitsToday} today · ${summary.visits7Days} this week`} />
+        <MetricCard label="Visitors" value={summary.uniqueVisitors} detail={`${summary.countryCount} countries`} />
+        <MetricCard label="Clicks" value={summary.conversionEvents} detail="Resume, email, LinkedIn, form" />
+        <MetricCard label="Ignored" value={summary.botFiltered} detail="Admin, bots, tests" />
       </section>
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <h2>30-day traffic</h2>
-            <p>Human page views after bot/admin filtering.</p>
+            <h2>Traffic</h2>
+            <p>Last 30 days. Human page views after filtering.</p>
           </div>
-          <time>{new Date(summary.lastUpdated).toLocaleString()}</time>
+          <div className={styles.panelMeta}>
+            <span>{summary.storageMode}</span>
+            <time>{new Date(summary.lastUpdated).toLocaleString()}</time>
+          </div>
         </div>
         <div className={styles.dayChart} aria-label="Daily visits">
           {summary.dailyVisits.length > 0 ? (
@@ -77,8 +82,8 @@ export default async function AdminAnalyticsPage() {
       </section>
 
       <section className={styles.twoColumn}>
-        <Leaderboard title="Top pages" items={summary.topPages} empty="No page views yet." />
-        <Leaderboard title="Recruiter actions" items={summary.eventBreakdown} empty="No conversion events yet." />
+        <Leaderboard title="Pages" items={summary.topPages} empty="No page views yet." />
+        <Leaderboard title="Clicks" items={summary.eventBreakdown} empty="No clicks yet." />
       </section>
 
       <section className={styles.threeColumn}>
@@ -89,7 +94,7 @@ export default async function AdminAnalyticsPage() {
 
       <section className={styles.twoColumn}>
         <TablePanel
-          title="Top locations"
+          title="Locations"
           columns={["Location", "Visits"]}
           rows={summary.topLocations.map((item) => [item.location, String(item.count)])}
           empty="No known locations yet. Local/private IP traffic appears as Unknown."
@@ -105,8 +110,8 @@ export default async function AdminAnalyticsPage() {
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <h2>Recent activity</h2>
-            <p>Filtered list: human-facing page views and conversion events.</p>
+            <h2>Recent</h2>
+            <p>Latest page views and clicks.</p>
           </div>
         </div>
         <div className={styles.tableWrap}>
@@ -115,7 +120,7 @@ export default async function AdminAnalyticsPage() {
               <tr>
                 <th>Time</th>
                 <th>Type</th>
-                <th>Page / Event</th>
+                <th>Page / Click</th>
                 <th>Source</th>
                 <th>Device</th>
                 <th>Location</th>

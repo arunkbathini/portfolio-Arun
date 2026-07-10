@@ -1,6 +1,24 @@
 {
   "visits": [
     {
+      "id": "4158c9a6-145f-46fc-8b19-609a66221c66",
+      "type": "pageview",
+      "timestamp": "2026-07-10T05:39:07.306Z",
+      "pathname": "/admin/analytics",
+      "referrer": "Direct",
+      "ipHash": "eff8e7ca506627fe15dda5e0e512fcaad70b6d520f37cc76597fdb4f2d83a1a3",
+      "country": "Unknown",
+      "region": "Unknown",
+      "city": "Unknown",
+      "latitude": null,
+      "longitude": null,
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+      "device": "Desktop",
+      "browser": "Chrome",
+      "source": "Direct",
+      "isBot": false
+    },
+    {
       "id": "a900d33a-a994-4cdb-a2ee-8c10d5e911e3",
       "timestamp": "2026-07-09T23:02:45.982Z",
       "pathname": "/case-studies",
