@@ -46,7 +46,7 @@ export default async function AdminAnalyticsPage() {
       <section className={styles.metricGrid} aria-label="Analytics overview">
         <MetricCard label="Page views" value={summary.totalVisits} detail={`${summary.visits7Days} in 7 days`} />
         <MetricCard label="Unique visitors" value={summary.uniqueVisitors} detail={`${summary.countryCount} known countries`} />
-        <MetricCard label="Recruiter actions" value={summary.conversionEvents} detail="Resume, email, LinkedIn, case studies" />
+        <MetricCard label="Recruiter actions" value={summary.conversionEvents} detail="Resume, email, LinkedIn, opportunity form" />
         <MetricCard label="Filtered records" value={summary.botFiltered} detail="Admin, bots, local tests" />
       </section>
 

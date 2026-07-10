@@ -31,6 +31,8 @@ type StoreSchema = {
 };
 
 const MAX_VISITS = 5000;
+const IGNORED_PATH_PREFIXES = ["/admin", "/case-studies"];
+const IGNORED_EVENTS = new Set(["case_study_open"]);
 let writeQueue = Promise.resolve();
 
 function getStorePath() {
@@ -120,6 +122,13 @@ function detectBrowser(userAgent: string) {
 
 function isBotTraffic(userAgent: string) {
   return /bot|crawler|spider|curl|wget|node|headless|lighthouse|pagespeed/i.test(userAgent);
+}
+
+function isIgnoredRecord(visit: VisitRecord) {
+  return (
+    IGNORED_PATH_PREFIXES.some((prefix) => visit.pathname === prefix || visit.pathname.startsWith(`${prefix}/`)) ||
+    IGNORED_EVENTS.has(visit.eventName ?? "")
+  );
 }
 
 function sourceFromReferrer(referrer: string) {
@@ -247,7 +256,11 @@ export async function getAnalyticsSummary() {
     source: visit.source ?? sourceFromReferrer(visit.referrer),
     isBot: visit.isBot ?? isBotTraffic(visit.userAgent),
   }));
-  const humanVisits = visits.filter((visit) => !visit.isBot && !visit.pathname.startsWith("/admin"));
+  const humanVisits = visits.filter(
+    (visit) =>
+      !visit.isBot &&
+      !isIgnoredRecord(visit)
+  );
   const pageViews = humanVisits.filter((visit) => visit.type === "pageview");
   const events = humanVisits.filter((visit) => visit.type === "event");
   const now = Date.now();
@@ -330,7 +343,7 @@ export async function getAnalyticsSummary() {
 
 export async function getAnalyticsCsv() {
   const store = await readStore();
-  const rows = store.visits.map((visit) => [
+  const rows = store.visits.filter((visit) => !isIgnoredRecord(visit)).map((visit) => [
     visit.timestamp,
     visit.type ?? "pageview",
     visit.pathname,

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { Target, Layers, ShieldCheck, Activity } from "lucide-react";
 import {
@@ -264,23 +263,8 @@ export function WorkSkillsSection() {
                     <span key={`${project.number}-${item}`}>{item}</span>
                   ))}
                 </div>
-                {project.caseStudy && <span className="card-link">Open case file →</span>}
               </>
             );
-            if (project.caseStudy) {
-              return (
-                <Reveal key={project.number} delay={i * 80} variant="card3d" className={`portfolio-card ${project.variant ?? "default"}`}>
-                  <Link
-                    href={`/case-studies/${project.caseStudy}`}
-                    style={{ display: "contents" }}
-                    data-analytics-event="case_study_open"
-                    data-analytics-label={project.title}
-                  >
-                    {content}
-                  </Link>
-                </Reveal>
-              );
-            }
             return (
               <Reveal
                 key={project.number}
@@ -435,18 +419,6 @@ export function ShowcaseSection() {
           </div>
         </div>
       </Reveal>
-      {featured.caseStudy && (
-        <p className="showcase-caption">
-          <Link
-            className="card-link"
-            href={`/case-studies/${featured.caseStudy}`}
-            data-analytics-event="case_study_open"
-            data-analytics-label={`Featured ${featured.title}`}
-          >
-            Read the full case study →
-          </Link>
-        </p>
-      )}
     </section>
   );
 }

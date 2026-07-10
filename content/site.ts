@@ -116,7 +116,6 @@ export type Project = {
   title: string;
   body: string;
   variant?: "large" | "dark" | "default";
-  caseStudy?: string; // slug → links to /case-studies/[slug]
 };
 
 export const projects: Project[] = [
@@ -125,7 +124,6 @@ export const projects: Project[] = [
     title: "Salesforce dual-track CI/CD transformation",
     body: "Led enterprise shift from manual changesets to Salesforce DevOps Center for core metadata and Vlocity Build Tool + GitHub Actions for OmniStudio DataPacks. Integrated CodeQL, SonarQube quality gates, Jira orchestration, and ServiceNow handoffs. Result: 40% faster releases, zero unplanned rollbacks in 18 months.",
     variant: "large",
-    caseStudy: "devops-center-pipeline-recovery",
   },
   {
     number: "02",
