@@ -1,6 +1,7 @@
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
 import { Hero } from "@/components/hero";
+import OpportunityDesk from "@/components/opportunity-desk";
 import {
   Marquee,
   TrustSection,
@@ -19,6 +20,7 @@ export default function Home() {
         <TrustSection />
         <ExperienceShowcase />
         <CertificationWall />
+        <OpportunityDesk />
         <ContactCTA />
       </main>
       <SiteFooter />

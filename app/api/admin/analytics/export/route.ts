@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 
 export async function GET() {
   const cookieStore = await cookies();
-  if (!isAdminSession(cookieStore)) {
+  if (!(await isAdminSession(cookieStore))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

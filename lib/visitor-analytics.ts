@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { headers } from "next/headers";
@@ -60,8 +60,8 @@ export type AnalyticsSummary = {
 
 const MAX_VISITS = 5000;
 const KV_ANALYTICS_KEY = process.env.ANALYTICS_KV_KEY ?? "portfolio:visitor-analytics:v1";
-const IGNORED_PATH_PREFIXES = ["/admin", "/case-studies"];
-const IGNORED_EVENTS = new Set(["case_study_open"]);
+const IGNORED_PATH_PREFIXES = ["/admin"];
+const IGNORED_EVENTS = new Set<string>();
 let writeQueue = Promise.resolve();
 
 function getKvConfig() {
@@ -214,8 +214,19 @@ function isPublicIp(ip: string) {
   return true;
 }
 
+// HMAC rather than a plain hash — IPv4 space is small enough that an
+// unsalted sha256(ip) is reversible by brute force, which would defeat the
+// point of hashing visitor IPs at all.
+function getIpHashSecret() {
+  return (
+    process.env.ANALYTICS_DASHBOARD_SECRET ??
+    process.env.ANALYTICS_DASHBOARD_PASSWORD ??
+    "portfolio-analytics-dev-secret"
+  );
+}
+
 function hashIp(ip: string) {
-  return createHash("sha256").update(ip || "unknown-ip").digest("hex");
+  return createHmac("sha256", getIpHashSecret()).update(ip || "unknown-ip").digest("hex");
 }
 
 function detectDevice(userAgent: string) {

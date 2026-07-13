@@ -174,7 +174,7 @@ export function TrustSection() {
           </h2>
         </div>
         <div className="about-story-card">
-          <p className="about-card-kicker">Cloud DevOps Engineer · 13+ years</p>
+          <p className="about-card-kicker">Cloud DevOps Engineer · 10+ years</p>
           <p className="trust-lede">
             I turn fragile deployment processes into repeatable systems teams can trust.
             My work sits between developers and infrastructure: pipelines, clusters,

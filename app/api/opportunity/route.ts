@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { profile } from "@/content/site";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 /*
   POST /api/opportunity
@@ -15,9 +16,8 @@ import { profile } from "@/content/site";
 
 type Payload = Record<string, string>;
 
-const WINDOW_MS = 10 * 60 * 1000;
+const WINDOW_SECONDS = 10 * 60;
 const MAX_SUBMISSIONS = 4;
-const submissions = new Map<string, { count: number; resetAt: number }>();
 
 function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -28,27 +28,15 @@ function getClientKey(request: Request) {
   return (forwarded?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "local").toLowerCase();
 }
 
-function checkRateLimit(request: Request) {
-  const now = Date.now();
-  const key = getClientKey(request);
-  const current = submissions.get(key);
-  if (!current || current.resetAt <= now) {
-    submissions.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return null;
-  }
-  if (current.count >= MAX_SUBMISSIONS) {
-    return Math.ceil((current.resetAt - now) / 1000);
-  }
-  current.count += 1;
-  return null;
-}
-
 export async function POST(request: Request) {
-  const retryAfter = checkRateLimit(request);
-  if (retryAfter) {
+  const { limited, retryAfterSeconds } = await checkRateLimit(`opportunity:${getClientKey(request)}`, {
+    max: MAX_SUBMISSIONS,
+    windowSeconds: WINDOW_SECONDS,
+  });
+  if (limited) {
     return NextResponse.json(
       { error: "Too many submissions. Please try again later." },
-      { status: 429, headers: { "Retry-After": String(retryAfter) } }
+      { status: 429, headers: { "Retry-After": String(retryAfterSeconds ?? WINDOW_SECONDS) } }
     );
   }
 

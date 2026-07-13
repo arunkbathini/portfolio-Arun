@@ -15,7 +15,7 @@ type CountItem = {
 
 export default async function AdminAnalyticsPage() {
   const cookieStore = await cookies();
-  if (!isAdminSession(cookieStore)) {
+  if (!(await isAdminSession(cookieStore))) {
     redirect("/admin/login");
   }
 

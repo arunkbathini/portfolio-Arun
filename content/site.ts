@@ -26,9 +26,9 @@ export const profile = {
   hiringMessage:
     "Cloud DevOps Engineer turning fragile deployments into boring, repeatable systems across AWS, Azure, Kubernetes, Terraform, and quality-gated CI/CD.",
   intro:
-    "Cloud DevOps Engineer with 13+ years turning fragile deployments into boring, repeatable ones. AWS and Azure, Kubernetes and Terraform, pipelines that actually gate on quality. Currently building infrastructure for healthcare systems where downtime is not an abstraction.",
+    "Cloud DevOps Engineer with 10+ years turning fragile deployments into boring, repeatable ones. AWS and Azure, Kubernetes and Terraform, pipelines that actually gate on quality. Currently building infrastructure for healthcare systems where downtime is not an abstraction.",
   about:
-    "I build the machinery that gets code from a laptop to production without anyone holding their breath. Thirteen years in, six of them deep in AWS and Azure, I have spent most of my career on the unglamorous side of software: the pipelines, the clusters, the Terraform modules nobody notices until they break. I have migrated on-prem SQL estates into RDS, run EKS and AKS clusters under HIPAA constraints, and replaced enough manual release checklists with GitHub Actions to develop strong opinions about what belongs in a workflow file. Certified across Azure, AWS, and Kubernetes, though the certifications matter less than the 3 a.m. incidents that taught me what they leave out. Currently building healthcare infrastructure where the systems I keep running are the ones clinicians depend on.",
+    "I build the machinery that gets code from a laptop to production without anyone holding their breath. More than ten years in, six of them deep in AWS and Azure, I have spent most of my career on the unglamorous side of software: the pipelines, the clusters, the Terraform modules nobody notices until they break. I have migrated on-prem SQL estates into RDS, run EKS and AKS clusters under HIPAA constraints, and replaced enough manual release checklists with GitHub Actions to develop strong opinions about what belongs in a workflow file. Certified across Azure, AWS, and Kubernetes, though the certifications matter less than the 3 a.m. incidents that taught me what they leave out. Currently building healthcare infrastructure where the systems I keep running are the ones clinicians depend on.",
   availability: "Open for Cloud DevOps, Salesforce DevOps, contract, and C2C engagements",
   resumeHref: "/Bathini-Arun-Kumar-Resume.docx",
   linkedin: "https://www.linkedin.com/in/arunbathiniab525/",
@@ -43,7 +43,7 @@ export const recruiterFit = [
 ] as const;
 
 export const impactMetrics = [
-  { value: "13+", label: "Years driving enterprise IT transformation" },
+  { value: "10+", label: "Years driving enterprise IT transformation" },
   { value: "6+", label: "Years architecting DevOps and cloud delivery" },
   { value: "50+", label: "Production environments orchestrated safely" },
   { value: "<24h", label: "Guaranteed recruiter response window" },
@@ -57,7 +57,7 @@ export const navLinks = [
 ];
 
 export const stats = [
-  { value: "13", label: "Years in IT", tone: "blue" },
+  { value: "10+", label: "Years in IT", tone: "blue" },
   { value: "6", label: "DevOps years", tone: "mint" },
   { value: "3", label: "Certifications", tone: "orange" },
 ] as const;

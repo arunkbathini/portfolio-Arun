@@ -10,20 +10,15 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.6.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "gray-matter": "^4.0.3",
     "lucide-react": "^1.23.0",
     "motion": "^12.42.2",
     "next": "^16.2.0",
-    "next-mdx-remote": "^6.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "shadcn": "^4.13.0",
-    "tailwind-merge": "^3.6.0",
-    "three": "^0.185.1"
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
@@ -31,7 +26,6 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/three": "^0.185.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.2.0",
     "tailwindcss": "^4.1.0",

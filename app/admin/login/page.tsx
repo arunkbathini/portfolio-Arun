@@ -10,14 +10,19 @@ type LoginPageProps = {
 
 export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
   const cookieStore = await cookies();
-  if (isAdminSession(cookieStore)) {
+  if (await isAdminSession(cookieStore)) {
     redirect("/admin/analytics");
   }
 
   const { error } = await searchParams;
-  const errorMessage = error === "rate-limit"
-    ? "Too many attempts. Wait a few minutes and try again."
-    : "Invalid password. Try again.";
+  const errorMessage =
+    error === "rate-limit"
+      ? "Too many attempts. Wait a few minutes and try again."
+      : error === "not-configured"
+      ? "This dashboard isn't configured yet — set ANALYTICS_DASHBOARD_PASSWORD in the environment."
+      : error
+      ? "Invalid password. Try again."
+      : null;
 
   return (
     <main style={{ minHeight: "100dvh", display: "grid", placeItems: "center", padding: "24px" }}>

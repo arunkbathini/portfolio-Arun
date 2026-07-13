@@ -11,3 +11,6 @@ mobile-screenshots/
 next-env.d.ts
 *.tsbuildinfo
 .lighthouseci
+
+# Local analytics/session storage — real visitor data, never commit.
+/.data
