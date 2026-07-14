@@ -1,4 +1,4 @@
-import { createHmac } from "node:crypto";
+import { createHmac, randomBytes } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { headers } from "next/headers";
@@ -155,7 +155,7 @@ async function writeStore(data: StoreSchema) {
 
   const filePath = getStorePath();
   await mkdir(path.dirname(filePath), { recursive: true });
-  const tmpPath = `${filePath}.${process.pid}.tmp`;
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.${randomBytes(8).toString("hex")}.tmp`;
   await writeFile(tmpPath, JSON.stringify(data, null, 2), "utf8");
   await rename(tmpPath, filePath);
 }

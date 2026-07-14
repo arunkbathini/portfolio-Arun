@@ -9,7 +9,7 @@ const SESSION_TTL_SECONDS = 60 * 60 * 24 * 14; // 14 days — matches the cookie
 const KV_SESSION_PREFIX = "portfolio:admin-session:";
 
 function getDashboardPassword() {
-  const password = process.env.ANALYTICS_DASHBOARD_PASSWORD;
+  const password = process.env.ANALYTICS_DASHBOARD_PASSWORD?.trim();
   if (!password) {
     throw new Error("Missing ANALYTICS_DASHBOARD_PASSWORD environment variable.");
   }
@@ -27,7 +27,7 @@ function safeEqual(left: string, right: string) {
 
 /** Throws if ANALYTICS_DASHBOARD_PASSWORD is missing — callers decide how to surface that. */
 export function validateDashboardPassword(input: string) {
-  return safeEqual(input, getDashboardPassword());
+  return safeEqual(input.trim(), getDashboardPassword());
 }
 
 // ---- Session store ---------------------------------------------------
@@ -81,7 +81,7 @@ async function readLocalSessions(): Promise<LocalSessionStore> {
 async function writeLocalSessions(store: LocalSessionStore) {
   const filePath = getSessionsFilePath();
   await mkdir(path.dirname(filePath), { recursive: true });
-  const tmpPath = `${filePath}.${process.pid}.tmp`;
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.${randomBytes(8).toString("hex")}.tmp`;
   await writeFile(tmpPath, JSON.stringify(store), "utf8");
   await rename(tmpPath, filePath);
 }

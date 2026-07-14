@@ -5,7 +5,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 export const runtime = "nodejs";
 
 const WINDOW_SECONDS = 10 * 60;
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 20;
 
 function getClientKey(request: Request) {
   const forwarded = request.headers.get("x-forwarded-for");
