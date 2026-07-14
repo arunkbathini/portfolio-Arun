@@ -17,6 +17,8 @@ const heroTech = [
 ];
 
 const shippingPhrases = [
+  "AWS workloads",
+  "Azure platforms",
   "Salesforce releases",
   "cloud deployments",
   "CI/CD pipelines",
@@ -58,9 +60,8 @@ export function Hero() {
           </h1>
 
           <p className="hero-lede hero-cloud-lede">
-            Cloud DevOps Engineer with <strong>10+ years</strong> turning fragile deployments
-            into boring, repeatable ones. AWS and Azure, Kubernetes and Terraform,
-            pipelines that actually gate on quality.
+            Cloud DevOps Engineer with <strong>10+ years</strong> in IT and <strong>6+ years</strong>{" "}
+            across AWS, Azure, Kubernetes, Terraform, Ansible, Salesforce, and CI/CD automation.
           </p>
 
           <div className="hero-shipping-line">
@@ -96,7 +97,7 @@ export function Hero() {
           <div className="target-roles-shell">
             <article className="target-card target-card-top">
               <span className="target-label">Target Roles</span>
-              <h2>Cloud DevOps Engineer, Salesforce DevOps, Site Reliability Engineer, Platform Engineering</h2>
+              <h2>Cloud DevOps Engineer, AWS DevOps Engineer, Azure DevOps Engineer, Site Reliability Engineer</h2>
             </article>
 
             <div className="target-bottom-wrap">
@@ -104,7 +105,7 @@ export function Hero() {
                 <article className="target-card target-card-bottom target-card-left">
                   <span className="blueprint-marker marker-left" aria-hidden="true" />
                   <span className="target-label">Core Expertise</span>
-                  <p>Salesforce DevOps Center, GitHub Actions, Jenkins, Kubernetes, Terraform, AWS, Azure</p>
+                  <p>AWS, Azure, Salesforce, GitHub Actions, Jenkins, Kubernetes, Terraform, Ansible</p>
                 </article>
 
                 <article className="target-card target-card-bottom target-card-right">

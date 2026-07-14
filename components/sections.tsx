@@ -23,11 +23,11 @@ const aboutProofPoints = [
   },
   {
     label: "Where I work",
-    value: "AWS, Azure, EKS, AKS, RDS, GitHub Actions, Jenkins, and Salesforce DevOps.",
+    value: "AWS, Azure, Salesforce, AKS, RDS, GitHub Actions, Jenkins, Terraform, and Ansible.",
   },
   {
     label: "How I think",
-    value: "Make deployments repeatable, observable, and calm enough for healthcare-grade production.",
+    value: "Make deployments repeatable, observable, and calm enough for enterprise production.",
   },
 ] as const;
 
@@ -212,11 +212,11 @@ export function TrustSection() {
 
 const workSignals = [
   {
-    label: "Release Recovery",
-    metric: "40% faster",
-    stack: ["Salesforce", "GitHub Actions", "CodeQL", "ServiceNow"],
+    label: "Cloud Delivery",
+    metric: "CI/CD",
+    stack: ["GitHub Actions", "Jenkins", "Salesforce", "AWS"],
     summary:
-      "Turned manual changesets into a governed release lane with automated checks, handoffs, and rollback discipline.",
+      "Built governed deployment workflows across AWS, Kubernetes, Salesforce, and enterprise release environments.",
   },
   {
     label: "Platform Factory",
@@ -585,7 +585,7 @@ export function ContactCTA() {
         <h2>
           Ready to join <span className="accent">your team</span>
         </h2>
-        <p>Cloud DevOps and Salesforce DevOps support for teams shipping production work.</p>
+        <p>Cloud DevOps, AWS, Azure, Salesforce, Kubernetes, and CI/CD support for teams shipping production work.</p>
         <div className="contact-direct" aria-label="Availability details">
           {contactHighlights.map((item) => (
             <span key={item.label}>

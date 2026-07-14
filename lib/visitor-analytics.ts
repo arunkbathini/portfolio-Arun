@@ -44,10 +44,13 @@ export type AnalyticsSummary = {
   visits7Days: number;
   visits30Days: number;
   conversionEvents: number;
+  resumeDownloads: number;
+  sectionViews: number;
   botFiltered: number;
   lastUpdated: string;
   storageMode: "Vercel KV" | "Local JSON";
   topPages: CountItem[];
+  topViewedSections: CountItem[];
   topSources: CountItem[];
   deviceBreakdown: CountItem[];
   browserBreakdown: CountItem[];
@@ -55,6 +58,7 @@ export type AnalyticsSummary = {
   dailyVisits: { date: string; count: number }[];
   topCountries: { country: string; count: number }[];
   topLocations: { location: string; count: number }[];
+  recentResumeDownloads: VisitRecord[];
   recentVisits: VisitRecord[];
 };
 
@@ -402,6 +406,8 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   );
   const pageViews = humanVisits.filter((visit) => visit.type === "pageview");
   const events = humanVisits.filter((visit) => visit.type === "event");
+  const resumeDownloadEvents = events.filter((event) => event.eventName === "resume_download");
+  const sectionViewEvents = events.filter((event) => event.eventName === "section_view");
   const now = Date.now();
   const since = (days: number) => new Date(now - days * 24 * 60 * 60 * 1000).toISOString();
 
@@ -413,6 +419,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   const deviceMap = new Map<string, number>();
   const browserMap = new Map<string, number>();
   const eventMap = new Map<string, number>();
+  const sectionMap = new Map<string, number>();
   const dailyMap = new Map<string, number>();
 
   for (const visit of pageViews) {
@@ -431,6 +438,11 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   for (const event of events) {
     const name = event.eventName ?? "unknown";
     eventMap.set(name, (eventMap.get(name) ?? 0) + 1);
+  }
+
+  for (const event of sectionViewEvents) {
+    const label = event.eventLabel || event.pathname;
+    sectionMap.set(label, (sectionMap.get(label) ?? 0) + 1);
   }
 
   const ranked = (map: Map<string, number>, limit = 10) => Array.from(map.entries())
@@ -463,10 +475,13 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
     visits7Days: pageViews.filter((visit) => visit.timestamp >= since(7)).length,
     visits30Days: pageViews.filter((visit) => visit.timestamp >= since(30)).length,
     conversionEvents: events.length,
+    resumeDownloads: resumeDownloadEvents.length,
+    sectionViews: sectionViewEvents.length,
     botFiltered: visits.length - humanVisits.length,
     lastUpdated: new Date().toISOString(),
     storageMode: getAnalyticsStorageMode(),
     topPages: ranked(pathMap),
+    topViewedSections: ranked(sectionMap),
     topSources: ranked(sourceMap),
     deviceBreakdown: ranked(deviceMap),
     browserBreakdown: ranked(browserMap),
@@ -477,6 +492,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       .slice(-30),
     topCountries,
     topLocations,
+    recentResumeDownloads: resumeDownloadEvents.slice(0, 25),
     recentVisits: humanVisits.slice(0, 50),
   };
 }

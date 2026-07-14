@@ -116,7 +116,7 @@
 }
 
 .metricGrid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   margin-bottom: 18px;
 }
 
@@ -342,5 +342,11 @@
   .panelMeta {
     justify-self: start;
     justify-content: flex-start;
+  }
+}
+
+@media (max-width: 1180px) and (min-width: 961px) {
+  .metricGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

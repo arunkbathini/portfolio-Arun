@@ -29,7 +29,7 @@ export default async function AdminAnalyticsPage() {
           <p className={styles.eyebrow}>Live visitor data</p>
           <h1>Visitor dashboard</h1>
           <p className={styles.subhead}>
-            Updates every 10 seconds. Tracking page views, clicks, sources, devices, and locations.
+            Updates every 10 seconds. Tracking visitors, page views, viewed sections, resume downloads, sources, devices, and timestamps.
           </p>
         </div>
         <div className={styles.headerActions}>
@@ -48,7 +48,8 @@ export default async function AdminAnalyticsPage() {
       <section className={styles.metricGrid} aria-label="Analytics overview">
         <MetricCard label="Views" value={summary.totalVisits} detail={`${summary.visitsToday} today · ${summary.visits7Days} this week`} />
         <MetricCard label="Visitors" value={summary.uniqueVisitors} detail={`${summary.countryCount} countries`} />
-        <MetricCard label="Clicks" value={summary.conversionEvents} detail="Resume, email, LinkedIn, form" />
+        <MetricCard label="Resume downloads" value={summary.resumeDownloads} detail="Timestamped below and in CSV" />
+        <MetricCard label="Sections viewed" value={summary.sectionViews} detail="What users scrolled into view" />
         <MetricCard label="Ignored" value={summary.botFiltered} detail="Admin, bots, tests" />
       </section>
 
@@ -83,7 +84,23 @@ export default async function AdminAnalyticsPage() {
 
       <section className={styles.twoColumn}>
         <Leaderboard title="Pages" items={summary.topPages} empty="No page views yet." />
-        <Leaderboard title="Clicks" items={summary.eventBreakdown} empty="No clicks yet." />
+        <Leaderboard title="Viewed sections" items={summary.topViewedSections} empty="No section views yet." />
+      </section>
+
+      <section className={styles.twoColumn}>
+        <Leaderboard title="Actions" items={summary.eventBreakdown} empty="No tracked actions yet." />
+        <TablePanel
+          title="Recent resume downloads"
+          columns={["Time", "Page", "Source", "Device", "Location"]}
+          rows={summary.recentResumeDownloads.map((visit) => [
+            new Date(visit.timestamp).toLocaleString(),
+            visit.pathname,
+            visit.source ?? visit.referrer,
+            visit.device ?? "Unknown",
+            formatLocation(visit),
+          ])}
+          empty="No resume downloads yet."
+        />
       </section>
 
       <section className={styles.threeColumn}>
@@ -138,7 +155,7 @@ export default async function AdminAnalyticsPage() {
                     </td>
                     <td>{visit.source ?? visit.referrer}</td>
                     <td>{visit.device ?? "Unknown"}</td>
-                    <td>{[visit.city, visit.region, visit.country].filter((item) => item && item !== "Unknown").join(", ") || "Unknown"}</td>
+                    <td>{formatLocation(visit)}</td>
                   </tr>
                 ))
               ) : (
@@ -154,6 +171,14 @@ export default async function AdminAnalyticsPage() {
       </section>
     </main>
   );
+}
+
+function formatLocation(visit: {
+  city: string;
+  region: string;
+  country: string;
+}) {
+  return [visit.city, visit.region, visit.country].filter((item) => item && item !== "Unknown").join(", ") || "Unknown";
 }
 
 function MetricCard({ label, value, detail }: { label: string; value: number; detail: string }) {

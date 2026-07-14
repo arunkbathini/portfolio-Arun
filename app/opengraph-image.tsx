@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { profile, impactMetrics } from "@/content/site";
 
-export const alt = `${profile.name} — Salesforce DevOps & Cloud Platform Engineer`;
+export const alt = `${profile.name} — Cloud DevOps Engineer`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -66,7 +66,7 @@ export default function OpengraphImage() {
               textTransform: "uppercase",
             }}
           >
-            Salesforce &amp; Cloud DevOps, delivered like production.
+            AWS, Azure, Kubernetes, and CI/CD delivered like production.
           </div>
         </div>
 

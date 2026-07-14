@@ -43,17 +43,17 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: `${profile.name} | Salesforce DevOps & Cloud Platform Engineer`,
+  title: `${profile.name} | Cloud DevOps Engineer`,
   description: profile.intro,
   openGraph: {
-    title: `${profile.name} | Salesforce DevOps & Cloud Platform Engineer`,
+    title: `${profile.name} | Cloud DevOps Engineer`,
     description: profile.intro,
     url: siteUrl,
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${profile.name} | Salesforce DevOps & Cloud Platform Engineer`,
+    title: `${profile.name} | Cloud DevOps Engineer`,
     description: profile.intro,
   },
 };

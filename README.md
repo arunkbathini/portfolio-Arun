@@ -1,6 +1,6 @@
 # Arun Portfolio — Next.js rebuild
 
-A custom, data-driven rebuild of the portfolio, positioned **Salesforce DevOps first, cloud breadth in support**. Built so the site itself demonstrates a real CI/CD pipeline — fitting for a DevOps engineer.
+A custom, data-driven rebuild of the portfolio, positioned around **AWS/Azure Cloud DevOps, Kubernetes, infrastructure as code, and CI/CD automation**. Built so the site itself demonstrates a real CI/CD pipeline — fitting for a DevOps engineer.
 
 ## Stack
 
@@ -62,7 +62,7 @@ Deploy on **Vercel** (connect the GitHub repo) to get preview deploys per PR for
 ## Before you go live — replace these placeholders
 
 - [ ] Set the real production domain in **one place**: `NEXT_PUBLIC_SITE_URL` (env var) or the fallback in `content/site.ts` → `siteUrl`. It feeds `app/layout.tsx`, `app/sitemap.ts`, and `app/robots.ts` automatically.
-- [ ] Drop your résumé at `public/Bathini-Arun-Kumar-DevOps-Resume.pdf` (the hero and contact CTA both link to it — currently 404s)
-- [ ] Update roles/titles in `content/site.ts` to match your current position
+- [x] Drop your résumé at `public/Bathini-Arun-Kumar-Resume.docx` (the hero and contact CTA both link to it)
+- [x] Update roles/titles in `content/site.ts` to match your current position
 - [x] Favicon (`app/icon.svg`) and OG image (`app/opengraph-image.tsx`, generated from `content/site.ts` at build time) are already wired up
 - [ ] If you want the "Opportunity Desk" form to email you directly instead of falling back to `mailto:`, set `RESEND_API_KEY` and `FROM_EMAIL` (see `.env.example`)
