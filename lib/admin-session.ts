@@ -1,4 +1,4 @@
-import { randomBytes, timingSafeEqual } from "node:crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
@@ -7,6 +7,7 @@ export const ADMIN_SESSION_COOKIE = "portfolio_admin_session";
 
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 14; // 14 days — matches the cookie's maxAge
 const KV_SESSION_PREFIX = "portfolio:admin-session:";
+const SIGNED_SESSION_PREFIX = "v1";
 
 function getDashboardPassword() {
   const password = process.env.ANALYTICS_DASHBOARD_PASSWORD?.trim();
@@ -23,6 +24,31 @@ function safeEqual(left: string, right: string) {
     return false;
   }
   return timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function signSessionPayload(expiresAt: number, nonce: string) {
+  return createHmac("sha256", getDashboardPassword()).update(`${expiresAt}.${nonce}`).digest("hex");
+}
+
+function createSignedSessionToken() {
+  const expiresAt = Date.now() + SESSION_TTL_SECONDS * 1000;
+  const nonce = randomBytes(24).toString("hex");
+  const signature = signSessionPayload(expiresAt, nonce);
+  return `${SIGNED_SESSION_PREFIX}.${expiresAt}.${nonce}.${signature}`;
+}
+
+function isValidSignedSessionToken(token: string) {
+  const [version, expiresAtRaw, nonce, signature] = token.split(".");
+  if (version !== SIGNED_SESSION_PREFIX || !expiresAtRaw || !nonce || !signature) {
+    return false;
+  }
+
+  const expiresAt = Number(expiresAtRaw);
+  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+    return false;
+  }
+
+  return safeEqual(signature, signSessionPayload(expiresAt, nonce));
 }
 
 /** Throws if ANALYTICS_DASHBOARD_PASSWORD is missing — callers decide how to surface that. */
@@ -96,14 +122,19 @@ function pruneExpired(store: LocalSessionStore): LocalSessionStore {
 }
 
 export async function createAdminSessionToken() {
-  const token = randomBytes(32).toString("hex");
   const kv = getKvConfig();
 
   if (kv) {
+    const token = randomBytes(32).toString("hex");
     await kvPipeline(kv, [["SET", `${KV_SESSION_PREFIX}${token}`, "1", "EX", String(SESSION_TTL_SECONDS)]]);
     return token;
   }
 
+  if (process.env.VERCEL) {
+    return createSignedSessionToken();
+  }
+
+  const token = randomBytes(32).toString("hex");
   const store = pruneExpired(await readLocalSessions());
   store[token] = Date.now() + SESSION_TTL_SECONDS * 1000;
   await writeLocalSessions(store);
@@ -118,6 +149,10 @@ export async function revokeAdminSessionToken(token: string) {
     return;
   }
 
+  if (process.env.VERCEL) {
+    return;
+  }
+
   const store = pruneExpired(await readLocalSessions());
   delete store[token];
   await writeLocalSessions(store);
@@ -129,6 +164,10 @@ async function isValidSessionToken(token: string) {
   if (kv) {
     const [{ result }] = await kvPipeline(kv, [["GET", `${KV_SESSION_PREFIX}${token}`]]);
     return Boolean(result);
+  }
+
+  if (process.env.VERCEL) {
+    return isValidSignedSessionToken(token);
   }
 
   const store = pruneExpired(await readLocalSessions());
